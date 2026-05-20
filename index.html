@@ -3,9 +3,898 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitHub Actions Deploy</title>
+  <title>Obadiah Kariuki — Linux Systems Specialist</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --surface: #0f1520;
+      --surface2: #151d2e;
+      --border: #1e2d45;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --accent3: #10b981;
+      --text: #c9d1d9;
+      --text-dim: #6e7f95;
+      --text-bright: #e6edf3;
+      --mono: 'JetBrains Mono', monospace;
+      --display: 'Syne', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.3;
+    }
+
+    /* GRID BACKGROUND */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(10, 14, 20, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-logo span { color: var(--text-dim); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 6rem 3rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero-content { max-width: 700px; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 11px;
+      color: var(--accent3);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      padding: 0.4rem 0.8rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 2px;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent3);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .hero h1 {
+      font-family: var(--display);
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      color: var(--text-bright);
+      margin-bottom: 0.5rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero h1 .accent { color: var(--accent); }
+
+    .hero-subtitle {
+      font-family: var(--display);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-weight: 400;
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+
+    .hero-desc {
+      font-size: 13px;
+      color: var(--text);
+      max-width: 560px;
+      margin-bottom: 3rem;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .stat-item { }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: #33ddff;
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* TERMINAL BLOCK */
+    .terminal {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      animation: fadeIn 1s 0.5s ease both;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,212,255,0.05);
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1rem;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #28c840; }
+
+    .terminal-title {
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .terminal-body {
+      padding: 1.2rem 1.4rem;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .t-dim { color: var(--text-dim); }
+    .t-acc { color: var(--accent); }
+    .t-grn { color: var(--accent3); }
+    .t-pur { color: #a78bfa; }
+    .t-yel { color: #fbbf24; }
+
+    .t-line { display: block; }
+
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-50%) scale(0.96); }
+      to { opacity: 1; transform: translateY(-50%) scale(1); }
+    }
+
+    /* SECTIONS */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 3rem;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 800;
+      color: var(--text-bright);
+      margin-bottom: 3rem;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* SKILLS GRID */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .skill-card {
+      background: var(--surface);
+      padding: 1.8rem;
+      transition: background 0.2s;
+    }
+
+    .skill-card:hover { background: var(--surface2); }
+
+    .skill-icon {
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .skill-name {
+      font-family: var(--display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.8rem;
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 0.2rem 0.5rem;
+      background: rgba(0,212,255,0.08);
+      color: var(--accent);
+      border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+
+    .tag.green {
+      background: rgba(16,185,129,0.08);
+      color: var(--accent3);
+      border-color: rgba(16,185,129,0.2);
+    }
+
+    .tag.purple {
+      background: rgba(124,58,237,0.08);
+      color: #a78bfa;
+      border-color: rgba(124,58,237,0.2);
+    }
+
+    /* EXPERIENCE */
+    .exp-list { display: flex; flex-direction: column; gap: 0; }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 2rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .exp-item:first-child { border-top: 1px solid var(--border); }
+
+    .exp-meta { }
+
+    .exp-period {
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.3rem;
+    }
+
+    .exp-org {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .exp-role {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 0.8rem;
+    }
+
+    .exp-desc {
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.8;
+    }
+
+    .exp-wins {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .exp-win {
+      font-size: 11px;
+      color: var(--accent3);
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+    }
+
+    .exp-win::before {
+      content: '✓';
+      flex-shrink: 0;
+    }
+
+    /* METRICS BAR */
+    .metrics {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .metric {
+      padding: 2.5rem 2rem;
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .metric:last-child { border-right: none; }
+
+    .metric-num {
+      font-family: var(--display);
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* CONTACT */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .contact-info { display: flex; flex-direction: column; gap: 1rem; }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .contact-item:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .contact-item-icon { color: var(--accent); font-size: 1rem; width: 20px; text-align: center; }
+
+    .contact-note {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { flex-direction: column; padding: 5rem 1.5rem 3rem; }
+      .terminal { display: none; }
+      section { padding: 3rem 1.5rem; }
+      .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metric:nth-child(2) { border-right: none; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Hello, GitHub Actions!</h1>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <span>~/</span>obadiah
+    </div>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div style="position:relative; overflow:hidden;">
+    <div class="hero">
+      <div class="hero-content">
+        <div class="hero-tag">Available for on-site roles</div>
+        <h1>Obadiah<br><span class="accent">Kariuki</span></h1>
+        <p class="hero-subtitle">Linux Systems Specialist &amp; HPC Engineer</p>
+        <p class="hero-desc">
+          8+ years building enterprise-scale Linux environments, high-performance computing clusters,
+          and GPU infrastructure — sustaining 99.9%+ uptime across fleets of 25–30+ servers
+          for up to 10,000 concurrent users.
+        </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-num">8+</div>
+            <div class="stat-label">Years experience</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">99.9%</div>
+            <div class="stat-label">Uptime sustained</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">250+</div>
+            <div class="stat-label">HPC cores managed</div>
+          </div>
+        </div>
+        <div class="hero-cta">
+          <a href="#contact" class="btn btn-primary">→ Get in touch</a>
+          <a href="#experience" class="btn btn-outline">View experience</a>
+        </div>
+      </div>
+
+      <!-- TERMINAL -->
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <div class="terminal-title">obadiah@hpc-cluster:~</div>
+        </div>
+        <div class="terminal-body">
+          <span class="t-line"><span class="t-dim">$ </span><span class="t-acc">whoami</span></span>
+          <span class="t-line t-grn">Linux Systems Specialist</span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line"><span class="t-dim">$ </span><span class="t-acc">uptime</span></span>
+          <span class="t-line"><span class="t-pur">8 years, 0 critical failures</span></span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line"><span class="t-dim">$ </span><span class="t-acc">cat skills.txt</span></span>
+          <span class="t-line"><span class="t-yel">HPC</span> · GlusterFS · Ceph · Lustre</span>
+          <span class="t-line"><span class="t-yel">GPU</span> · NVIDIA A100/V100 · CUDA</span>
+          <span class="t-line"><span class="t-yel">OPS</span> · Kubernetes · Docker · Ansible</span>
+          <span class="t-line"><span class="t-yel">OBS</span> · Prometheus · Grafana · PD</span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line"><span class="t-dim">$ </span><span class="t-acc">ping</span> distinctionkim@gmail.com</span>
+          <span class="t-line t-grn">PONG — response time &lt; 24h</span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line"><span class="t-dim">$ </span><span class="cursor"></span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- METRICS -->
+  <section style="padding: 0; max-width:100%;">
+    <div class="metrics reveal">
+      <div class="metric">
+        <div class="metric-num">80%</div>
+        <div class="metric-label">Storage throughput improvement</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num">60%</div>
+        <div class="metric-label">Reduction in incident MTTD</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num">90%</div>
+        <div class="metric-label">Manual provisioning eliminated</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num">50%</div>
+        <div class="metric-label">Quality incidents reduced</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <p class="section-label">// core competencies</p>
+    <h2 class="section-title">Technical Stack</h2>
+    <div class="skills-grid reveal">
+      <div class="skill-card">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-name">HPC & Distributed Storage</div>
+        <p style="font-size:12px;color:var(--text-dim)">250+ processing cores, clustered file systems, GPU cluster ops</p>
+        <div class="skill-tags">
+          <span class="tag">GlusterFS</span>
+          <span class="tag">Ceph</span>
+          <span class="tag">Lustre</span>
+          <span class="tag">JuiceFS</span>
+          <span class="tag">NFS</span>
+          <span class="tag">iSCSI</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🖥</div>
+        <div class="skill-name">Linux Systems</div>
+        <p style="font-size:12px;color:var(--text-dim)">Enterprise provisioning, tuning, fault resolution</p>
+        <div class="skill-tags">
+          <span class="tag">RHEL</span>
+          <span class="tag">CentOS</span>
+          <span class="tag">Ubuntu</span>
+          <span class="tag">Debian</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🔮</div>
+        <div class="skill-name">GPU Infrastructure</div>
+        <p style="font-size:12px;color:var(--text-dim)">Driver management, CUDA toolchain, workload scheduling</p>
+        <div class="skill-tags">
+          <span class="tag purple">A100</span>
+          <span class="tag purple">V100</span>
+          <span class="tag purple">CUDA</span>
+          <span class="tag purple">Tesla V100</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">📦</div>
+        <div class="skill-name">Containers & Virtualisation</div>
+        <p style="font-size:12px;color:var(--text-dim)">Scientific computing for 100+ users</p>
+        <div class="skill-tags">
+          <span class="tag green">Docker</span>
+          <span class="tag green">Kubernetes</span>
+          <span class="tag green">Singularity</span>
+          <span class="tag green">KVM</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">☁️</div>
+        <div class="skill-name">Cloud & IaC</div>
+        <p style="font-size:12px;color:var(--text-dim)">90% faster provisioning, saving 2h per deployment</p>
+        <div class="skill-tags">
+          <span class="tag">AWS</span>
+          <span class="tag">GCP</span>
+          <span class="tag">Terraform</span>
+          <span class="tag">CloudFormation</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">📊</div>
+        <div class="skill-name">Observability</div>
+        <p style="font-size:12px;color:var(--text-dim)">60% MTTD reduction, 50 GB/day log processing</p>
+        <div class="skill-tags">
+          <span class="tag purple">Prometheus</span>
+          <span class="tag purple">Grafana</span>
+          <span class="tag purple">Datadog</span>
+          <span class="tag purple">Zabbix</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">⚙️</div>
+        <div class="skill-name">Config Management</div>
+        <p style="font-size:12px;color:var(--text-dim)">Consistent, auditable server configuration at scale</p>
+        <div class="skill-tags">
+          <span class="tag">Ansible</span>
+          <span class="tag">Puppet</span>
+          <span class="tag">Chef</span>
+          <span class="tag">Salt</span>
+          <span class="tag">GNU-Guix</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🔐</div>
+        <div class="skill-name">Security & Scripting</div>
+        <p style="font-size:12px;color:var(--text-dim)">~90% manual effort eliminated via automation</p>
+        <div class="skill-tags">
+          <span class="tag green">Bash</span>
+          <span class="tag green">Python</span>
+          <span class="tag green">SELinux</span>
+          <span class="tag green">IAM</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <p class="section-label">// work history</p>
+    <h2 class="section-title">Experience</h2>
+    <div class="exp-list reveal">
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Feb 2026 — Present</div>
+          <div class="exp-org">Independent Consulting</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-role">Linux Systems Specialist / DevOps Engineer</div>
+          <p class="exp-desc">Managing 25 client environments across RedHat/CentOS and Ubuntu — deploying container-based scientific computing, provisioning cloud infrastructure via Terraform, and maintaining CI/CD pipelines with automated quality gating.</p>
+          <div class="exp-wins">
+            <div class="exp-win">99.9% uptime sustained across all 25 managed environments</div>
+            <div class="exp-win">90% reduction in manual provisioning time — 2 hours saved per deployment</div>
+            <div class="exp-win">Zero data loss across the full Linux ecosystem</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Jul 2022 — Jan 2026</div>
+          <div class="exp-org">The WoundPros LLC</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-role">Linux Systems / DevOps Engineer Consultant</div>
+          <p class="exp-desc">Supervised 30+ Unix/Linux servers for a SaaS platform serving 10,000+ active users. Deployed AI/ML workloads on high-compute AWS infrastructure with real-time Slack-integrated CloudWatch alerting and full CI/CD automation.</p>
+          <div class="exp-wins">
+            <div class="exp-win">99.9% uptime for 10,000+ active users</div>
+            <div class="exp-win">65 incidents/month resolved — MTTR 15–30 minutes</div>
+            <div class="exp-win">50% reduction in customer-reported quality incidents</div>
+            <div class="exp-win">1,000+ users trained; zero data loss across 50 GB backup cycles</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Mar 2023 — May 2024</div>
+          <div class="exp-org">Puulse Marketing</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-role">Linux Systems / DevOps Engineer Consultant</div>
+          <p class="exp-desc">Managed 15 Linux servers on GCP — designed and operated GlusterFS-based clustered storage, built centralised observability stack, and enforced GitOps workflows across the fleet.</p>
+          <div class="exp-wins">
+            <div class="exp-win">80% storage throughput improvement — 50 GB/day scientific data</div>
+            <div class="exp-win">60% reduction in MTTD; 99.99% platform uptime</div>
+            <div class="exp-win">25% cloud infrastructure cost reduction</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Jan 2019 — Jun 2022</div>
+          <div class="exp-org">Philips Africa Limited</div>
+        </div>
+        <div class="exp-body">
+          <div class="exp-role">Research Scientist – Health Information Technology</div>
+          <p class="exp-desc">Deployed and sustained Linux-based IT solutions across 10 community life centres. Governed healthcare databases, engineered AI/ML data pipelines, and delivered systems documentation to ISO 13485/IEC 62304 standards.</p>
+          <div class="exp-wins">
+            <div class="exp-win">99% uptime and 100% data accuracy across all AI/ML workloads</div>
+            <div class="exp-win">Healthcare dashboard handed over to UNICEF — 250 end-users trained</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <p class="section-label">// get in touch</p>
+    <h2 class="section-title">Contact</h2>
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <a href="mailto:distinctionkim@gmail.com" class="contact-item">
+          <span class="contact-item-icon">✉</span>
+          distinctionkim@gmail.com
+        </a>
+        <a href="tel:+254708538496" class="contact-item">
+          <span class="contact-item-icon">☏</span>
+          +254 708 538 496
+        </a>
+        <div class="contact-item" style="cursor:default;">
+          <span class="contact-item-icon">◎</span>
+          Nairobi, Kenya — open to on-site roles
+        </div>
+      </div>
+      <div>
+        <p class="contact-note">
+          I am actively seeking Linux Systems Specialist and HPC engineering roles — particularly
+          positions involving high-performance computing clusters, distributed storage, and
+          GPU infrastructure in research or enterprise environments.<br><br>
+          Certifications in progress: RHCE · LFCE · CKA (Q3 2026).<br><br>
+          Response time typically under 24 hours.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span style="color:var(--accent)">~/</span>obadiah-kariuki &nbsp;·&nbsp;
+    Linux Systems Specialist &nbsp;·&nbsp; Nairobi, Kenya &nbsp;·&nbsp;
+    <span style="color:var(--text-dim)">Built with GitHub Actions</span>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const els = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    els.forEach(el => obs.observe(el));
+  </script>
+
 </body>
 </html>
